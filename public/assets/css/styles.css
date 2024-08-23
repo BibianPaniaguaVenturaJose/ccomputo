@@ -99,3 +99,11 @@ img{
 .form-sol{
     max-width: 98%;
 }
+
+input[type="number"] {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}

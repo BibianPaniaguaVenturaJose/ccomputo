@@ -12,6 +12,7 @@ use App\Models\Materias;
 use App\Models\Software;
 use App\Models\RegistroAulas;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -73,15 +74,21 @@ class HomeController extends Controller
         try {
             // Intenta crear el registro en la base de datos
             $registro = RegistroAulas::create($registroData);
-            return response()->json([
-                'registroAula' => $registro,
-                'status' => 201
-            ], 201);
+            //redirecciona al metodo logout
+            return $this->logoutAndRedirect();
         } catch (\Exception $e) {
-            dd($e);
+            Log::error('Error al guardar el registro: ' . $e->getMessage());
+            return response()->json(['error' => 'Error interno del servidor'], 500);
         }
+    }
 
-
+    //cierra sesion
+    private function logoutAndRedirect(){
+        Session::flush();
+        Auth::logout();
+        return redirect()->to('/login');
     }
 
 }
+
+

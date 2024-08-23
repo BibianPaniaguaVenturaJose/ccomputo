@@ -19,7 +19,7 @@
 
         <div class="mb-3">
             <label for="clave">Clave</label>
-            <input type="text" name="clave" id="clave" required>
+            <input type="text" name="clave" id="clave" required autocomplete="off">
         </div>
 
         <!-- Manejo de errores de autenticación -->
