@@ -89,11 +89,8 @@ class registroAulasController extends Controller
             Log::error('Error al guardar el registro: ' . $e->getMessage());
             return response()->json(['error' => 'Error interno del servidor'], 500);
         }
-        dd($e);
-    }
-
-    public function insert(Request $request) {
 
     }
+
 
 }

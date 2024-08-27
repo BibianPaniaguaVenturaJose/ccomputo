@@ -13,9 +13,10 @@ class Aulas extends Model
 
     protected $primaryKey = 'idAula'; // Especifica el nombre de la clave primaria
 
-    public $timestamps = false; // Desactiva los timestamps si no se usan
+    public $timestamps = false; // Desactiva los timestamps que no se usan
 
     protected $fillable = [
         'nombre'
     ];
 }
+
