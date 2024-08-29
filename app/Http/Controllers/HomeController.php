@@ -49,7 +49,7 @@ class HomeController extends Controller
         $carreraNombre = Carreras::find($carreraId)->carrera;
         $materiaNombre = Materias::find($materiaId)->nombre;
         $softwareNombres = Software::whereIn('idSoftware', $softwareIds)->pluck('nombre')->toArray();
-        $softwareNombresJson = json_encode($softwareNombres); // No necesitas decodificar esto más tarde
+        $softwareNombresJson = json_encode($softwareNombres); // No necesitas decodificar
 
         // Construye los datos que se enviarán al método create()
         $registroData = [
@@ -88,7 +88,6 @@ class HomeController extends Controller
         Auth::logout();
         return redirect()->to('/login');
     }
-
 }
 
 

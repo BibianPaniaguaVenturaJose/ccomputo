@@ -49,7 +49,7 @@
 
                 <div class="mb-4">
                     <label for="numAlumnos">N. Alumnos</label>
-                    <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="34" autocomplete="off">
+                    <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="40" autocomplete="off">
                 </div>
 
                 <div class="mb-4">

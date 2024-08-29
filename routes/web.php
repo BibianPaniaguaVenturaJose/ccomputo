@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\Api\registroAulasController;
+use App\Http\Controllers\InformController;
 use App\Http\Controllers\RecordsController;
 
 /*
@@ -22,6 +23,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('inform/pdf',[InformController::class,'pdf'])->name('inform.pdf');
+
+
 Route::get('/login',[LoginController::class,'show']);
 
 Route::post('/login', [LoginController::class,'login']);
@@ -33,8 +38,8 @@ Route::post('/login', [LoginController::class,'login']);
 
 Route::get('/home',[HomeController::class,'index']);
 
-Route::get('/logout',[LogoutController::class,'logout']);
-
 Route::post('/home',[HomeController::class,'store']);
 
+
 //});
+

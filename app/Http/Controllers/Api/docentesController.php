@@ -9,17 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class docentesController extends Controller
 {
+
     public function index(){
 
         $docente = Docentes::All();
-
-        // if($docente->isEmpty()){
-        //     $data = [
-        //         'message' => 'No se encontraron  estudiantes',
-        //         'status' => 200
-        //     ];
-        //     return response()->json($data, 404);
-        // }
 
         $data = [
             'docente' => $docente,
