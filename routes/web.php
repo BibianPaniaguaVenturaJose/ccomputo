@@ -23,23 +23,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// informes
 
-Route::get('inform/pdf',[InformController::class,'pdf'])->name('inform.pdf');
+Route::get('inform/home', [InformController::class, 'generarGraficaAlumnosXAula']);
+Route::get('inform/sol', [InformController::class, 'filtrarPorFecha']);
+
+Route::get('inform/software', [InformController::class, 'generarGraficaSoftwareUsado']);
+Route::get('inform/soft', [InformController::class, 'software']);
 
 
+// login
 Route::get('/login',[LoginController::class,'show']);
-
 Route::post('/login', [LoginController::class,'login']);
 
 
+//rutas protegidas
+//  Route::middleware('auth')->group(function () {
+//  });
 
-//Route::middleware('auth')->group(function () {
-   //rutas protegidas
+// home, donde se crean los registros de aulas
 
 Route::get('/home',[HomeController::class,'index']);
-
 Route::post('/home',[HomeController::class,'store']);
 
 
-//});
+
 

@@ -42,7 +42,7 @@ Route::delete('/docente/{idDocente}', [docentesController::class, 'destroy']);
 
 Route::get('/software', [softwareController::class, 'index']);
 
-Route::get('/software-options', [softwareController::class, 'showSoftwareOptions']);
+Route::get('/software-options', [softwareController::class, 'showSoftwareOptions']); //devuelve la vista de todos los software
 
 //carreras
 
@@ -58,19 +58,12 @@ Route::get('/materias/{idCarrera}', [MateriasController::class, 'show']);
 
 Route::get('/aulas', [aulasController::class, 'index']);
 
-//registros
-
-Route::get('/registros', [registrosController::class, 'index']);
-
-Route::post('/registros', [registrosController::class, 'store']);
-
-Route::patch('/registros/{control}', [RegistrosController::class, 'update']);
-
 //registros aulas
 
 Route::get('/registrosaulas', [registroAulasController::class, 'index']);
 
 Route::post('/registrosaulas', [registroAulasController::class, 'store']);
+
 
 
 
