@@ -24,9 +24,12 @@ Route::get('/', function () {
 });
 
 // informes
-
-Route::get('inform/home', [InformController::class, 'generarGraficaAlumnosXAula']);
+Route::get('inform/inicio', [InformController::class, 'generarGraficaAlumnosXAula']);
 Route::get('inform/sol', [InformController::class, 'filtrarPorFecha']);
+
+
+Route::get('inform/home', [InformController::class, 'show']);
+
 
 
 Route::get('inform/alumnos', [InformController::class, 'generarGraficaAlumnosXAulaXMes']);
@@ -34,7 +37,11 @@ Route::get('inform/mes', [InformController::class, 'filtrarFechaPorMes']);
 
 
 Route::get('inform/software', [InformController::class, 'generarGraficaSoftwareUsado']);
-Route::get('inform/soft', [InformController::class, 'software']);
+Route::get('inform/soft', [InformController::class, 'filtrarSoftware']);
+
+// Vistas parcilaes
+
+
 
 
 // login
