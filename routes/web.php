@@ -23,14 +23,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//Todas las graficas juntas
+Route::get('inform/home', [InformController::class, 'show']);
+
 // informes
 Route::get('inform/inicio', [InformController::class, 'generarGraficaAlumnosXAula']);
 Route::get('inform/sol', [InformController::class, 'filtrarPorFecha']);
-
-
-Route::get('inform/home', [InformController::class, 'show']);
-
-
 
 Route::get('inform/alumnos', [InformController::class, 'generarGraficaAlumnosXAulaXMes']);
 Route::get('inform/mes', [InformController::class, 'filtrarFechaPorMes']);
@@ -39,25 +37,14 @@ Route::get('inform/mes', [InformController::class, 'filtrarFechaPorMes']);
 Route::get('inform/software', [InformController::class, 'generarGraficaSoftwareUsado']);
 Route::get('inform/soft', [InformController::class, 'filtrarSoftware']);
 
-// Vistas parcilaes
-
-
-
-
 // login
-Route::get('/login',[LoginController::class,'show']);
-Route::post('/login', [LoginController::class,'login']);
+Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
 
-
-//rutas protegidas
-//  Route::middleware('auth')->group(function () {
-//  });
-
-// home, donde se crean los registros de aulas
-
-Route::get('/home',[HomeController::class,'index']);
-Route::post('/home',[HomeController::class,'store']);
-
-
+// home, protegido por auth middleware
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index']);
+    Route::post('/home', [HomeController::class, 'store']);
+});
 
 

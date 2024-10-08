@@ -168,6 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -182,7 +183,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        // 'Example' => App\Facades\Example::class,  https://www.youtube.com/watch?v=n04ic-ALRvw min 22:43
+        'PDF' => Barryvdh\DomPDF\Facade::class,
       ])->toArray(),
 
 ];

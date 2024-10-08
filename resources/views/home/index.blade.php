@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Aulas</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/stylesIndex.css') }}">
 </head>
 
 <body>
-    <h1>Aulas</h1>
-    <img src="{{ asset('assets/resources/logo_itsur.jpg') }}">
+    <header>
+        <div class="header-image">
+            <img src="{{ asset('assets/resources/LOGO_TECNM_BLANCO.png') }}" alt="ITSUR Logo">
+        </div>
+    </header>
 
     <form action="/home" method="POST" class="form-sol">
         @csrf
@@ -19,7 +22,8 @@
             <div class="cont-ind">
                 <div class="mb-4">
                     <label for="nombreDocente">Nombre Docente</label>
-                    <input type="text" id="nombreDocente" name="nombreDocente" disabled value="{{ $user->nombre }}" readonly>
+                    <input type="text" id="nombreDocente" name="nombreDocente" disabled value="{{ $user->nombre }}"
+                        readonly>
                     <input type="hidden" id="nombreDocenteHidden" name="nombreDocente" value="{{ $user->nombre }}">
                 </div>
 
@@ -49,7 +53,8 @@
 
                 <div class="mb-4">
                     <label for="numAlumnos">N. Alumnos</label>
-                    <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="40" autocomplete="off">
+                    <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="40"
+                        autocomplete="off">
                 </div>
 
                 <div class="mb-4">
@@ -163,6 +168,7 @@
         document.querySelector('.form-sol').addEventListener('submit', function(e) {
             let valid = true;
 
+
             const aula = document.getElementById('aulas').value;
             const carrera = document.getElementById('carreras').value;
             const materia = document.getElementById('materias').value;
@@ -171,7 +177,7 @@
                 '#software-checkboxes input[type="checkbox"]:checked');
 
             if (!aula) {
-                alert('Debe seleccionar un aula.');
+                alert('Debe seleccionar una aula.');
                 valid = false;
             }
 
@@ -185,8 +191,8 @@
                 valid = false;
             }
 
-            if (!numAlumnos || isNaN(numAlumnos) || numAlumnos < 1) {
-                alert('Debe ingresar un número de alumnos válido.');
+            if (!numAlumnos || isNaN(numAlumnos) || numAlumnos < 1 || numAlumnos > 40) {
+                alert('Debe ingresar una cantidad de alumnos');
                 valid = false;
             }
 

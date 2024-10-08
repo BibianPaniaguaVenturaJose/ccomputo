@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/stylesLogin.css') }}">
 </head>
 
 <body>
     <header>
-        <div class="header-text">ITSUR</div>
+        <div class="header-image">
+            <img src="{{ asset('assets/resources/LOGO_TECNM_BLANCO.png') }}" alt="ITSUR Logo">
+        </div>
     </header>
+
 
     <form action="/login" method="POST">
         @csrf

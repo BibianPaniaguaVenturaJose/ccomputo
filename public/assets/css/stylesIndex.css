@@ -1,18 +1,18 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #ccc;
     margin: 0;
-    padding: 20px;
+    height: 100vh;
 }
 
 form {
-    background-color: #fff;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     max-width: 400px;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 50px 50px; /* Ajusta margen superior/inferior y centra horizontalmente */
+
 }
 
 .mb-3 {
@@ -28,7 +28,7 @@ input[type="text"] {
 }
 
 button[type="submit"] {
-    background-color: #28a745;
+    background-color: #1B396A;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -37,26 +37,18 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: hsl(228, 100%, 50%);
+    background-color: #28a745;
 }
 
 /* Estilos para el header */
 header {
     display: flex;
     justify-content: flex-end;
-    font-family: 'Times New Roman', Times, serif;
     padding: 10px;
-    background-color: #05c91c;
+    background-color: #1B396A;
     border-bottom: 1px solid #ffffff;
     margin-bottom: 20px;
-    width: 100%;
     height: 60px;
-}
-
-.header-text {
-    font-size: 30px;
-    color: #333;
-    font-weight: bold;
 }
 
 /* Diseña el contenedor principal para dividir los divs a la mitad */
@@ -66,6 +58,15 @@ header {
     width: 100%;
     height: auto; /* Ajusta según el contenido */
 }
+
+.header-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+
+}
+
 
 .cont-ind {
     width: 48%; /* Cada div ocupará casi la mitad del contenedor principal */
@@ -93,7 +94,7 @@ textarea {
 }
 
 img{
-    width: 100px;
+    width: 120px;
 }
 
 .form-sol{
@@ -107,3 +108,10 @@ input[type="number"] {
     border-radius: 5px;
     margin-top: 5px;
 }
+
+
+/* Los colores del tec son:
+    -> Azul : #1B396A
+    -> Gris : #807e82
+    -> Negro : #000000
+*/

@@ -82,12 +82,13 @@ class HomeController extends Controller
         }
     }
 
-    //cierra sesion
+    //cierre de sesion
     private function logoutAndRedirect(){
         Session::flush();
         Auth::logout();
         return redirect()->to('/login');
     }
+
 }
 
 

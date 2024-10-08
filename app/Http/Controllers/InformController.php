@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\RegistroAulas;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class InformController extends Controller
 {
     // muestra la vista de home
-    public function show(){
-
+    public function show()
+    {
         return view('inform.home');
     }
+
 
     //muestra la grafica de alumnos por aula es la view
     public function generarGraficaAlumnosXAula()
@@ -127,7 +127,7 @@ class InformController extends Controller
                 DB::raw('GROUP_CONCAT(DISTINCT carrera ORDER BY carrera ASC) AS carreras_agrupadas'),
                 DB::raw('SUM(alumnos) AS total_alumnos')
             )
-            ->groupBy('software_item', 'carrera',)
+            ->groupBy('software_item', 'carrera', )
             ->orderBy('software_item')
             ->get();
 
@@ -150,7 +150,7 @@ class InformController extends Controller
         $data->push($totalGeneral);
         $porcentajes->push(100); // El total general sería el 100%
 
-        // Retornar la vista con los datos obtenidos
+        // Retornar la vista con los datos obtenidos  'inform.software'
         return view('inform.software', [
             'labels' => $labels,
             'data' => $data,
@@ -178,11 +178,11 @@ class InformController extends Controller
 
         // Crear la primera subconsulta
         $subquery = DB::table('registrosaulas')
-        ->select(
-            DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[0]')) AS software_item"),
-            'alumnos',
-            'carrera',
-            DB::raw("CONCAT(year, '-', (CASE mes
+            ->select(
+                DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[0]')) AS software_item"),
+                'alumnos',
+                'carrera',
+                DB::raw("CONCAT(year, '-', (CASE mes
             WHEN 'enero' THEN '01'
             WHEN 'febrero' THEN '02'
             WHEN 'marzo' THEN '03'
@@ -196,7 +196,7 @@ class InformController extends Controller
             WHEN 'noviembre' THEN '11'
             WHEN 'diciembre' THEN '12'
         END), '-', dia) AS fecha_completa")
-        )
+            )
             ->whereNotNull(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[0]'))"))
             ->whereBetween(
                 DB::raw("CONCAT(year, '-', (CASE mes
@@ -220,11 +220,11 @@ class InformController extends Controller
         for ($i = 1; $i <= 16; $i++) {
             $subquery = $subquery->unionAll(
                 DB::table('registrosaulas')
-                ->select(
-                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[$i]')) AS software_item"),
-                    'alumnos',
-                    'carrera',
-                    DB::raw("CONCAT(year, '-', (CASE mes
+                    ->select(
+                        DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[$i]')) AS software_item"),
+                        'alumnos',
+                        'carrera',
+                        DB::raw("CONCAT(year, '-', (CASE mes
                     WHEN 'enero' THEN '01'
                     WHEN 'febrero' THEN '02'
                     WHEN 'marzo' THEN '03'
@@ -238,10 +238,10 @@ class InformController extends Controller
                     WHEN 'noviembre' THEN '11'
                     WHEN 'diciembre' THEN '12'
                 END), '-', dia) AS fecha_completa")
-                )
-                ->whereNotNull(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[$i]'))"))
-                ->whereBetween(
-                    DB::raw("CONCAT(year, '-', (CASE mes
+                    )
+                    ->whereNotNull(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(software, '$[$i]'))"))
+                    ->whereBetween(
+                        DB::raw("CONCAT(year, '-', (CASE mes
                     WHEN 'enero' THEN '01'
                     WHEN 'febrero' THEN '02'
                     WHEN 'marzo' THEN '03'
@@ -255,24 +255,24 @@ class InformController extends Controller
                     WHEN 'noviembre' THEN '11'
                     WHEN 'diciembre' THEN '12'
                 END), '-', dia)"),
-                    [$fechaInicioStr, $fechaFinStr]
-                )
+                        [$fechaInicioStr, $fechaFinStr]
+                    )
             ); // Aquí finaliza cada subconsulta en el ciclo
         }
 
 
         // Ejecutar la subconsulta combinada y agrupar los resultados
         $softwareCounts = DB::table(DB::raw("({$subquery->toSql()}) as sub"))
-        ->mergeBindings($subquery) // No uses getQuery(), solo pasa la consulta original
-        ->select(
-            'software_item',
-            'carrera',
-            DB::raw('GROUP_CONCAT(DISTINCT carrera ORDER BY carrera ASC) AS carreras_agrupadas'),
-            DB::raw('SUM(alumnos) AS total_alumnos')
-        )
-        ->groupBy('software_item', 'carrera')
-        ->orderBy('software_item')
-        ->get();
+            ->mergeBindings($subquery) // No uses getQuery(), solo pasa la consulta original
+            ->select(
+                'software_item',
+                'carrera',
+                DB::raw('GROUP_CONCAT(DISTINCT carrera ORDER BY carrera ASC) AS carreras_agrupadas'),
+                DB::raw('SUM(alumnos) AS total_alumnos')
+            )
+            ->groupBy('software_item', 'carrera')
+            ->orderBy('software_item')
+            ->get();
 
 
         // Calcular el total general de alumnos
@@ -305,8 +305,6 @@ class InformController extends Controller
 
 
     // Codigo para la seccion alumnos de reportes
-
-    //muestra la grafica de alumnos por aula es la view base
     public function generarGraficaAlumnosXAulaXMes()
     {
 
@@ -454,27 +452,11 @@ class InformController extends Controller
         ]);
     }
 
-    // Devuelve las vistas parciales para el dashboard
-    // Aun no funciona correctamente
-    // En tu controlador
-    public function home()
-    {
-        return view('partials.inicio'); // Vista parcial
+    // Todas las funciones juntas
+    public function filtrarInform(Request $request){
+
     }
 
-    public function laboratorios()
-    {
-        return view('partials.laboratorios'); // Vista parcial
-    }
 
-    public function alumnos()
-    {
-        return view('partials.alumnos'); // Vista parcial
-    }
-
-    public function software()
-    {
-        return view('partials.software'); // Vista parcial
-    }
 
 }

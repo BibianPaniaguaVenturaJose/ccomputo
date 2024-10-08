@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('materias', function (Blueprint $table) {
             $table->id('idMateria');
+            $table->string('clave', length:12)->unique();
             $table->string('nombre', 45);
             $table->foreignId('idCarrera')->constrained('carreras', 'idCarrera');
         });
@@ -26,3 +27,6 @@ return new class extends Migration
         Schema::dropIfExists('materias');
     }
 };
+
+
+

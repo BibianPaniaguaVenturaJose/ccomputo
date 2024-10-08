@@ -109,7 +109,7 @@
                     if (!isset($softwareData[$software])) {
                         $softwareData[$software] = [
                             'alumnos' => 0,
-                            'porcentaje' => 0
+                            'porcentaje' => 0,
                         ];
                     }
                     // Sumar los alumnos y porcentajes de cada software
@@ -137,8 +137,6 @@
 
             // Eliminar el último registro, el de Total General
             labels.pop();
-            //data.pop();
-            //carreras.pop();
 
             // Crear un mapa para agrupar los datos por software y carrera
             var softwareData = {};
@@ -153,21 +151,29 @@
                 softwareData[software][carreras[index]] += data[index];
             });
 
-            // Crear un conjunto de colores para las carreras
-            var uniqueCarreras = [...new Set(carreras)]; // Carreras únicas
-            var colors = uniqueCarreras.reduce(function(map, carrera) {
-                map[carrera] = getRandomColor(); // Asigna un color aleatorio a cada carrera
-                return map;
-            }, {});
+            // Asigna colores específicos a cada carrera
+            var colors = {
+                'Ambiental': '#FFAD99', // Naranja pastel
+                'Sistemas C.': '#99FFB3', // Verde pastel
+                'Gestion': '#99BBFF', // Azul pastel
+                'Electronica': '#FF99CC', // Rosa pastel
+                'Industrial': '#99FFFF', // Turquesa pastel
+                'Automotrices': '#FFEB99', // Amarillo pastel
+                'Gastronomia': '#D699FF', // Púrpura pastel
+
+                // Se agregan mas colores o carreras si es necesario
+            };
 
             // Crear los datasets, una barra apilada por software con valores para cada carrera
-            var datasets = uniqueCarreras.map(function(carrera) {
+            var datasets = Object.keys(colors).map(function(carrera) {
                 return {
                     label: carrera, // Nombre de la carrera
-                    data: [...new Set(labels)].map(function(software) { // Asegurarse de tener una única barra por software
-                        return softwareData[software][carrera] || 0; // Asigna el valor correspondiente, o 0 si no existe
+                    data: [...new Set(labels)].map(function(
+                        software) { // Asegurarse de tener una única barra por software
+                        return softwareData[software][carrera] ||
+                            0; // Asigna el valor correspondiente, o 0 si no existe
                     }),
-                    backgroundColor: colors[carrera], // Color de la carrera
+                    backgroundColor: colors[carrera], // Color predefinido de la carrera
                     borderColor: colors[carrera],
                     borderWidth: 1
                 };
@@ -196,18 +202,9 @@
                     }
                 }
             });
-
-            // Función para generar colores aleatorios
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#';
-                for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                }
-                return color;
-            }
         });
     </script>
+
 
 
 </body>

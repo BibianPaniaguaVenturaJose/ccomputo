@@ -24,6 +24,7 @@ body {
     margin: 0 auto;
     margin-top: 20px;
     border-collapse: collapse;
+    margin-bottom: 40px;
 }
 
 .table thead th {
