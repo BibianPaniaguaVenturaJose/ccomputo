@@ -17,9 +17,9 @@ class Materias extends Model
 
     protected $fillable = [
         'idMateria',
-        'clave',
         'nombre',
-        'idCarrera'
+        'idCarrera',
+        'claveDocente'
     ];
 
 }

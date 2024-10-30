@@ -16,7 +16,8 @@ class Software extends Model
     public $timestamps = false; // Desactiva los timestamps si no se usan
 
     protected $fillable = [
-        'nombre'
+        'nombre',
+        'idAula'
     ];
 
 }

@@ -50,6 +50,3 @@ body {
     box-shadow: none;
 }
 
-.table th:first-letter{
-    text-transform: uppercase;
-}

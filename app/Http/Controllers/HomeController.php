@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use Carbon\Traits\ToStringFormat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -44,12 +45,15 @@ class HomeController extends Controller
         $comentario = $request->input('comentario', '');
         $softwareIds = $request->input('software');
 
+        //dd($request->all());
+
         // Busca los nombres correspondientes en las tablas relacionadas
         $aulaNombre = Aulas::find($aulaId)->nombre;
         $carreraNombre = Carreras::find($carreraId)->carrera;
         $materiaNombre = Materias::find($materiaId)->nombre;
         $softwareNombres = Software::whereIn('idSoftware', $softwareIds)->pluck('nombre')->toArray();
-        $softwareNombresJson = json_encode($softwareNombres); // No necesitas decodificar
+        $softwareNombresJson = json_encode($softwareNombres);
+
 
         // Construye los datos que se enviarán al método create()
         $registroData = [
@@ -69,7 +73,7 @@ class HomeController extends Controller
         ];
 
         // Imprime los valores antes de enviarlos a la base de datos
-        //dd($registroData);
+        // dd($registroData);
 
         try {
             // Intenta crear el registro en la base de datos

@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Aulas</title>
     <link rel="stylesheet" href="{{ asset('assets/css/stylesIndex.css') }}">
+
 </head>
 
 <body>
@@ -21,14 +22,14 @@
         <div class="container">
             <div class="cont-ind">
                 <div class="mb-4">
-                    <label for="nombreDocente">Nombre Docente</label>
+                    <label for="nombreDocente" class="custom-label">Nombre Docente</label>
                     <input type="text" id="nombreDocente" name="nombreDocente" disabled value="{{ $user->nombre }}"
                         readonly>
                     <input type="hidden" id="nombreDocenteHidden" name="nombreDocente" value="{{ $user->nombre }}">
                 </div>
 
                 <div class="mb-4">
-                    <label for="aulas">Aula</label>
+                    <label for="aulas" class="custom-label">Aula</label>
                     <select id="aulas" name="aula" class="selec">
                         <option value="" disabled selected>Seleccione un aula</option>
                         <!-- Opciones de aula -->
@@ -36,15 +37,14 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="carreras">Carrera</label>
-                    <select id="carreras" name="carrera" class="selec">
-                        <option value="" disabled selected>Seleccione una carrera</option>
-                        <!-- Opciones de carrera -->
-                    </select>
+                    <label for="carrera" class="custom-label">Carrera</label>
+                    <input type="text" id="carrera" class="selec" disabled readonly>
+                    <input type="hidden" id="hcarrera" name="carrera" readonly />
+                    <!-- Este es el campo que se envía -->
                 </div>
 
                 <div class="mb-4">
-                    <label for="materias">Materia</label>
+                    <label for="materias" class="custom-label">Materia</label>
                     <select id="materias" name="materia" class="selec">
                         <option value="" disabled selected>Seleccione una materia</option>
                         <!-- Opciones de materia -->
@@ -52,20 +52,20 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="numAlumnos">N. Alumnos</label>
+                    <label for="numAlumnos" class="custom-label">N. Alumnos</label>
                     <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="40"
                         autocomplete="off">
                 </div>
 
                 <div class="mb-4">
-                    <label for="comentario">Comentario</label><br>
-                    <textarea id="comentario" name="comentario" rows="10" cols="30"></textarea>
+                    <label for="comentario" class="custom-label">Comentario</label><br>
+                    <textarea id="comentario" name="comentario" rows="4" cols="30"></textarea>
                 </div>
             </div>
 
             <div class="cont-ind">
                 <div class="mb-4">
-                    <label for="software">Software</label><br>
+                    <label for="software-checkboxes" class="custom-label">Software</label><br>
                     <div id="software-checkboxes" name="software">
                         <!-- Los checkboxes se cargarán aquí -->
                     </div>
@@ -78,49 +78,54 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const carrerasUrl = '/api/carreras';
-            const materiasUrl = '/api/materias';
-            const softwareUrl = '/api/software';
 
-            // Cargar las carreras al inicio
-            fetch(carrerasUrl)
+            var idCarrera = 0;
+            // Recuperar la clave de la sesión
+            var claveDocente = '{{ $user->clave }}';
+
+            // Cargar las materias asignadas al docente al acceder
+            fetch(`/api/materias/${claveDocente}`) // Usando la clave del docente
                 .then(response => response.json())
                 .then(data => {
-                    const carrerasSelect = document.getElementById('carreras');
-                    carrerasSelect.innerHTML =
-                        '<option value="" disabled selected>Seleccione una carrera</option>';
-                    data.forEach(carrera => {
+                    const materiasSelect = document.getElementById('materias');
+                    materiasSelect.innerHTML =
+                        '<option value="" disabled selected>Seleccione una materia</option>';
+                    data.materias.forEach(materia => {
                         const option = document.createElement('option');
-                        option.value = carrera.idCarrera;
-                        option.textContent = carrera.carrera;
-                        carrerasSelect.appendChild(option);
+                        option.value = materia.idMateria;
+                        option.textContent = materia.nombre;
+                        materiasSelect.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error al cargar las carreras:', error));
+                .catch(error => console.error('Error al cargar las materias:', error));
 
-            // Escuchar el cambio en la selección de carrera
-            const carrerasSelect = document.getElementById('carreras');
-            carrerasSelect.addEventListener('change', function() {
-                const selectedCarrera = carrerasSelect.value;
 
-                if (selectedCarrera) {
-                    // Llamar a la API para obtener las materias según la carrera seleccionada
-                    fetch(`/api/materias/${selectedCarrera}`)
+            const materiasSelect = document.getElementById('materias');
+            materiasSelect.addEventListener('change', function() {
+                const selectedMateria = materiasSelect.value; // Obtener el idMateria seleccionado
+
+                if (selectedMateria) {
+                    // Llamar a la API para obtener la carrera usando el idMateria
+                    fetch(`/api/materias/carrera/${selectedMateria}`)
                         .then(response => response.json())
                         .then(data => {
-                            const materiasSelect = document.getElementById('materias');
-                            materiasSelect.innerHTML =
-                                '<option value="" disabled selected>Seleccione una materia</option>';
-                            data.materias.forEach(materia => {
-                                const option = document.createElement('option');
-                                option.value = materia.idMateria;
-                                option.textContent = materia.nombre;
-                                materiasSelect.appendChild(option);
-                            });
+                            const carreraInput = document.getElementById('carrera');
+                            const carreraHidden = document.getElementById('hcarrera');
+                            // Comprobar si se recibió un dato válido de carrera
+                            if (data && data.carrera) {
+                                carreraInput.value = data.carrera; // Asignar el nombre de la carrera
+                                carreraHidden.value = data.ID;
+                            } else {
+                                carreraInput.value = 'Carrera no encontrada';
+                                carreraHidden.value = '';
+                            }
+                            carreraInput.disabled = true; // Deshabilitar el campo
+
                         })
-                        .catch(error => console.error('Error al cargar las materias:', error));
+                        .catch(error => console.error('Error al cargar la carrera:', error));
                 }
             });
+
 
             // Cargar las aulas al inicio
             const aulasUrl = '/api/aulas';
@@ -135,75 +140,101 @@
                         option.textContent = aula.nombre;
                         aulasSelect.appendChild(option);
                     });
+
+                    // Añadir evento para cuando se seleccione un aula
+                    aulasSelect.addEventListener('change', function() {
+                        const selectedAulaId = this.value;
+                        cargarSoftwarePorAula(selectedAulaId);
+                    });
                 })
                 .catch(error => console.error('Error al cargar las aulas:', error));
 
-            // Cargar el software al inicio y generar los checkboxes
-            fetch(softwareUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const softwareCheckboxes = document.getElementById('software-checkboxes');
-                    data.forEach(software => {
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.id = `software_${software.idSoftware}`;
-                        checkbox.name = 'software[]';
-                        checkbox.value = software.idSoftware;
+            // Función para cargar el software basado en el aula seleccionada
+            function cargarSoftwarePorAula(idAula) {
+                const softwareUrl = `/api/software/${idAula}`; // Asume que tienes una API que acepta el idAula
+                fetch(softwareUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const softwareCheckboxes = document.getElementById('software-checkboxes');
+                        softwareCheckboxes.innerHTML = ''; // Limpiar los checkboxes previos
+                        data.forEach(software => {
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.id = `software_${software.idSoftware}`;
+                            checkbox.name = 'software[]';
+                            checkbox.value = software.idSoftware;
 
-                        const label = document.createElement('label');
-                        label.htmlFor = `software_${software.idSoftware}`;
-                        label.textContent = software.nombre;
+                            const label = document.createElement('label');
+                            label.htmlFor = `software_${software.idSoftware}`;
+                            label.textContent = software.nombre;
 
-                        const div = document.createElement('div');
-                        div.appendChild(checkbox);
-                        div.appendChild(label);
+                            const div = document.createElement('div');
+                            div.appendChild(checkbox);
+                            div.appendChild(label);
 
-                        softwareCheckboxes.appendChild(div);
-                    });
-                })
-                .catch(error => console.error('Error al cargar el software:', error));
-
-        });
-
-        document.querySelector('.form-sol').addEventListener('submit', function(e) {
-            let valid = true;
-
-
-            const aula = document.getElementById('aulas').value;
-            const carrera = document.getElementById('carreras').value;
-            const materia = document.getElementById('materias').value;
-            const numAlumnos = document.getElementById('numAlumnos').value;
-            const softwareCheckboxes = document.querySelectorAll(
-                '#software-checkboxes input[type="checkbox"]:checked');
-
-            if (!aula) {
-                alert('Debe seleccionar una aula.');
-                valid = false;
+                            softwareCheckboxes.appendChild(div);
+                        });
+                    })
+                    .catch(error => console.error('Error al cargar el software:', error));
             }
 
-            if (!carrera) {
-                alert('Debe seleccionar una carrera.');
-                valid = false;
-            }
 
-            if (!materia) {
-                alert('Debe seleccionar una materia.');
-                valid = false;
-            }
+            document.querySelector('.form-sol').addEventListener('submit', function(e) {
+                // Limpia los mensajes de error previos
+                document.querySelectorAll('.error-message').forEach(el => el.remove());
 
-            if (!numAlumnos || isNaN(numAlumnos) || numAlumnos < 1 || numAlumnos > 40) {
-                alert('Debe ingresar una cantidad de alumnos');
-                valid = false;
-            }
+                let valid = true;
 
-            if (softwareCheckboxes.length === 0) {
-                alert('Debe seleccionar al menos un software.');
-                valid = false;
-            }
+                const aula = document.getElementById('aulas').value;
+                const materia = document.getElementById('materias').value;
+                const carrera = document.getElementById('hcarrera').value;
+                const numAlumnos = document.getElementById('numAlumnos').value;
+                const softwareCheckboxes = document.querySelectorAll(
+                    '#software-checkboxes input[type="checkbox"]:checked');
 
-            if (!valid) {
-                e.preventDefault();
-            }
+                // Función para mostrar el mensaje de error
+                function showError(element, message) {
+                    const error = document.createElement('span');
+                    error.className = 'error-message';
+                    error.style.color = 'red';
+                    error.textContent = message;
+                    element.parentNode.appendChild(error);
+                }
+
+                // Validaciones
+                if (!aula) {
+                    showError(document.getElementById('aulas'), 'Debe seleccionar una aula.');
+                    valid = false;
+                }
+
+                if (!materia) {
+                    showError(document.getElementById('materias'), 'Debe seleccionar una materia.');
+                    valid = false;
+                }
+
+                if (!carrera) {
+                    showError(document.getElementById('hcarrera'), 'Debe seleccionar una carrera.');
+                    valid = false;
+                }
+
+                if (!numAlumnos || isNaN(numAlumnos) || numAlumnos < 1 || numAlumnos > 40) {
+                    showError(document.getElementById('numAlumnos'),
+                        'Debe ingresar una cantidad de alumnos entre 1 y 40.');
+                    valid = false;
+                }
+
+                if (softwareCheckboxes.length === 0) {
+                    showError(document.getElementById('software-checkboxes'),
+                        'Debe seleccionar al menos un software.');
+                    valid = false;
+                }
+
+                // Prevenir el envío del formulario si no es válido
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+
         });
     </script>
 </body>

@@ -23,19 +23,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Todas las graficas juntas
+//Todas las graficas juntas, metodos de Home
 Route::get('inform/home', [InformController::class, 'show']);
-
-// informes
-Route::get('inform/inicio', [InformController::class, 'generarGraficaAlumnosXAula']);
-Route::get('inform/sol', [InformController::class, 'filtrarPorFecha']);
-
-Route::get('inform/alumnos', [InformController::class, 'generarGraficaAlumnosXAulaXMes']);
-Route::get('inform/mes', [InformController::class, 'filtrarFechaPorMes']);
+Route::get('inform/filtrar', [InformController::class, 'filtrarDatos'])->name('filtrar');
 
 
-Route::get('inform/software', [InformController::class, 'generarGraficaSoftwareUsado']);
-Route::get('inform/soft', [InformController::class, 'filtrarSoftware']);
+// Metodos de inicio
+Route::get('inform/inicio', [InformController::class, 'cargar']);
+Route::get('inform/sol', [InformController::class, 'rangeFecha'])->name('range');
+
 
 // login
 Route::get('/login', [LoginController::class, 'show'])->name('login');

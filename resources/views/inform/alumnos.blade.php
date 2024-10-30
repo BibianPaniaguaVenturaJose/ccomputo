@@ -108,7 +108,6 @@
                 borderWidth: 1
             }));
 
-            console.log("Datasets:", datasets);
 
             if (datasets.length === 0 || datasets.every(ds => ds.data.every(d => d === 0))) {
                 console.error("No hay datos suficientes para los meses seleccionados.");

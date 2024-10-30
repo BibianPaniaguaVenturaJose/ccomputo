@@ -44,6 +44,9 @@ Route::get('/software', [softwareController::class, 'index']);
 
 Route::get('/software-options', [softwareController::class, 'showSoftwareOptions']); //devuelve la vista de todos los software
 
+Route::get('/software/{idAula}', [SoftwareController::class, 'getSoftwarePorAula']);
+
+
 //carreras
 
 Route::get('/carreras', [carrerasController::class, 'index']);
@@ -52,7 +55,10 @@ Route::get('/carreras', [carrerasController::class, 'index']);
 
 Route::get('/materias', [materiasController::class, 'index']);
 
-Route::get('/materias/{idCarrera}', [MateriasController::class, 'show']);
+Route::get('/materias/{claveDocente}', [materiasController::class, 'getMateriasPorDocente']);
+
+Route::get('/materias/carrera/{idMateria}', [materiasController::class,'obtenerCarreraPorMateria']);
+
 
 //aulas
 

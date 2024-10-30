@@ -87,7 +87,8 @@
         </form>
     </div>
 
-    <!-- Gráfica -->
+    <!-- Gráfica  -->
+
     <div class="grafica">
         <canvas id="graficaSoftwareXAula"></canvas>
     </div>
