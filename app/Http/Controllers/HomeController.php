@@ -93,6 +93,12 @@ class HomeController extends Controller
         return redirect()->to('/login');
     }
 
+    public function logout(){
+        Session::flush();
+        Auth::logout();
+        return redirect()->to('/login');
+    }
+
 }
 
 

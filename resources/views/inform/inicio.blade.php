@@ -14,7 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-
     <!-- Cargar docx -->
     <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/index.min.js"></script>
 
@@ -27,6 +26,9 @@
     <!-- CSS para Datepicker -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
+
+    <!-- Cargar chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -58,14 +60,19 @@
                                 Disponibilidad
                             </a>
                         </li>
-                    </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/inform/excel">
+                                <span data-feather="archive"></span>
+                                Importar Materias
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
 
             <!-- Columna para el contenido principal -->
             <div class="col-md-10">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-around align-items-center mb-4">
                     <form id="formularioFiltro" action="{{ route('range') }}" method="GET" class="mb-4">
 
                         <div class="row">
@@ -88,34 +95,20 @@
                     </div>
                 </div>
                 <!-- Aquí se pone el contenido -->
+
                 <div class="row">
-                    <div class= "container">
-                        <h2>Registros por Mes</h2>
+                    <div class="col-md-11">
+                        <div class="container">
 
-                        <div class= "grafica">
-                            <canvas id="graficaPorMes"></canvas>
+                            @include('partials.Reg', [
+                                'labels' => $labels,
+                                'data' => $data,
+                                'diasHabilesPorMesArray' => $diasHabilesPorMesArray,
+                            ])
                         </div>
-
-                        <!-- Tabla de Datos -->
-
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Periodo</th>
-                                    <th>Cantidad de Registros</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($labels as $index => $label)
-                                    <tr>
-                                        <td>{{ $label }}</td>
-                                        <td>{{ $data[$index] }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -131,12 +124,8 @@
         window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')
     </script>
 
-
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script>
-        feather.replace()
-    </script>
 
     <!-- JS para Datepicker -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -144,39 +133,211 @@
     <!-- Graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Cargar html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
+    <!-- Cargar docx -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/index.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Datos obtenidos de PHP
-            var labels = @json($labels); // Etiquetas de cada mes y año
-            var data = @json($data); // Cantidad de registros por mes
+            const downloadPDFButton = document.getElementById('downloadPDF');
+            const downloadWordButton = document.getElementById('downloadWord');
 
-            // Configuración del dataset
-            var dataset = {
-                label: 'Cantidad de Registros',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            };
+            if (downloadPDFButton) {
+                downloadPDFButton.addEventListener('click', function() {
+                    const {
+                        jsPDF
+                    } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    pdf.text('Informe: Registros y Disponibilidad', 10, 10);
 
-            // Crear la gráfica
-            var ctx = document.getElementById('graficaPorMes').getContext('2d');
-            var graficaPorMes = new Chart(ctx, {
-                type: 'bar', // Tipo de gráfica de barras
-                data: {
-                    labels: labels,
-                    datasets: [dataset]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                    let imgHeight = 0;
+
+                    // Captura gráfica de Registros
+                    const canvasRegistros = document.getElementById('registrosChart');
+                    if (canvasRegistros) {
+                        const imgRegistros = canvasRegistros.toDataURL('image/png');
+                        const imgWidth = 150; // Ajuste del tamaño de la imagen
+                        imgHeight = (canvasRegistros.height / canvasRegistros.width) * imgWidth;
+                        pdf.addImage(imgRegistros, 'PNG', 10, 20, imgWidth, imgHeight);
                     }
-                }
-            });
+
+                    // Captura tabla de Registros
+                    const tableRegistros = document.getElementById('tablaRegistros');
+                    if (tableRegistros) {
+                        const tableHeaders = Array.from(tableRegistros.querySelectorAll('thead th')).map(
+                            th => th.innerText);
+                        const tableRows = Array.from(tableRegistros.querySelectorAll('tbody tr')).map(tr =>
+                            Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+                        );
+
+                        let startY = 20 + imgHeight + 10; // Posición de la tabla después de la imagen
+                        pdf.autoTable({
+                            head: [tableHeaders],
+                            body: tableRows,
+                            startY: startY,
+                            theme: 'grid',
+                            styles: {
+                                fontSize: 8, // Tamaño de fuente reducido para ajuste en página
+                                cellPadding: 2,
+                            },
+                            margin: {
+                                left: 10,
+                                right: 10
+                            }, // Márgenes laterales
+                            tableWidth: 'auto', // Ajuste automático del ancho de la tabla
+                            columnStyles: {
+                                0: {
+                                    cellWidth: 'auto'
+                                },
+                                1: {
+                                    cellWidth: 'auto'
+                                },
+                                2: {
+                                    cellWidth: 'auto'
+                                }
+                            }
+                        });
+                    }
+
+                    // Descargar el PDF
+                    pdf.save('Informe_Registros_Disponibilidad.pdf');
+                });
+            }
+
+            if (downloadWordButton) {
+    downloadWordButton.addEventListener('click', async function() {
+        try {
+            const tableRegistros = document.getElementById('tablaRegistros');
+            const graph1 = document.getElementById('registrosChart');
+
+            if (tableRegistros && graph1) {
+                const {
+                    Document,
+                    Packer,
+                    Paragraph,
+                    Table,
+                    TableCell,
+                    TableRow,
+                    TextRun,
+                    ImageRun,
+                    AlignmentType,
+                    WidthType
+                } = window.docx;
+
+                // Crear encabezados y filas de la tabla Registros
+                const tableHeaders = Array.from(tableRegistros.querySelectorAll('thead th'))
+                    .map(th => th.innerText || "");
+                const tableRows = Array.from(tableRegistros.querySelectorAll('tbody tr'))
+                    .map(tr =>
+                        Array.from(tr.querySelectorAll('td')).map(td => td.innerText || "")
+                    );
+
+                // Capturar la gráfica como imagen usando html2canvas sin el parámetro 'scale'
+                const canvas1 = document.getElementById('registrosChart');
+                const imageGraph1 = canvas1.toDataURL('image/png');
+
+                // Definir el ancho máximo de la gráfica para ajustarlo a la página
+                const maxWidth = 500;
+                const maxHeight = 300;
+
+                // Generar el documento Word
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: [
+                            new Paragraph({
+                                children: [new TextRun({
+                                    text: "Informe: Registros y Disponibilidad",
+                                    bold: true,
+                                    size: 32
+                                })],
+                                alignment: AlignmentType.CENTER,
+                                spacing: {
+                                    after: 300
+                                }
+                            }),
+
+                            // Insertar la Gráfica de Registros
+                            new Paragraph({
+                                text: "Gráfica de Registros",
+                                spacing: {
+                                    before: 300
+                                }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new ImageRun({
+                                        data: imageGraph1,
+                                        transformation: {
+                                            width: maxWidth,  // Ajustado para que quepa bien en la página
+                                            height: maxHeight  // Altura ajustada
+                                        }
+                                    })
+                                ],
+                                alignment: AlignmentType.CENTER
+                            }),
+
+                            // Crear la tabla de Registros en el documento Word
+                            new Paragraph({
+                                text: "Tabla de Registros",
+                                spacing: {
+                                    before: 300
+                                }
+                            }),
+                            new Table({
+                                width: {
+                                    size: 100,
+                                    type: WidthType.PERCENTAGE
+                                },
+                                rows: [
+                                    new TableRow({
+                                        children: tableHeaders
+                                            .map(header =>
+                                                new TableCell({
+                                                    children: [
+                                                        new Paragraph(header)
+                                                    ]
+                                                })
+                                            )
+                                    }),
+                                    ...tableRows.map(row =>
+                                        new TableRow({
+                                            children: row
+                                                .map(cell =>
+                                                    new TableCell({
+                                                        children: [
+                                                            new Paragraph(cell)
+                                                        ]
+                                                    })
+                                                )
+                                        })
+                                    )
+                                ]
+                            })
+                        ]
+                    }]
+                });
+
+                // Descargar el archivo Word
+                Packer.toBlob(doc).then(blob => {
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = "Informe_Registros_Disponibilidad.docx";
+                    downloadLink.click();
+                }).catch(err => {
+                    console.error("Error al crear el documento:", err);
+                });
+
+            }
+        } catch (error) {
+            console.error("Error al importar docx:", error);
+        }
+    });
+}
+
+
         });
     </script>
 

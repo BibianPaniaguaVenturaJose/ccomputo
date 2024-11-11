@@ -58,14 +58,19 @@
                                 Disponibilidad
                             </a>
                         </li>
-                    </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/inform/excel">
+                                <span data-feather="archive"></span>
+                                Importar Materias
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
 
             <!-- Columna para el contenido principal -->
             <div class="col-md-10">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-around align-items-center mb-4">
                     <form id="formularioFiltro" action="{{ route('filtrar') }}" method="GET" class="mb-4">
 
                         <div class="row">

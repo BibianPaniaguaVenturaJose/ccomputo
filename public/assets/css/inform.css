@@ -63,6 +63,7 @@ body {
   .navbar-brand {
     padding-top: .75rem;
     padding-bottom: .75rem;
+    padding-left: .75rem;
     font-size: 1rem;
     background-color: rgba(0, 0, 0, .25);
     box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
@@ -106,6 +107,17 @@ body {
     height: 450px;
     margin: 0 auto;
     padding-bottom: 30px;
+    padding-top: 15px;
+}
+
+.grafica-alum{
+    padding-left: 13rem;
+    width: 90%;
+    max-width: 800px;
+    height: 450px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+    padding-top: 15px;
 }
 
 /* Estilos básicos para la tabla */
@@ -133,6 +145,65 @@ body {
 .table th:first-letter{
     text-transform: uppercase;
 }
+
+
+/* Estilos para el contenedor del formulario */
+.custom-form {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 2px solid #dcdcdc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el grupo del formulario */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Estilos para el input de archivo */
+.file-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.file-input:hover {
+    border-color: #888;
+}
+
+/* Estilos para el botón de envío */
+.submit-button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
 
   /*
    * Utilities

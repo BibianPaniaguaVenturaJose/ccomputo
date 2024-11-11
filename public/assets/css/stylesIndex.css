@@ -40,6 +40,19 @@ button[type="submit"]:hover {
     background-color: #28a745;
 }
 
+button[type="button"] {
+    background-color: #ce0505;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="button"]:hover {
+    background-color: #28a745;
+}
+
 /* Estilos para el header */
 header {
     display: flex;

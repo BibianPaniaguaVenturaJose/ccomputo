@@ -71,6 +71,7 @@
                     </div>
                 </div>
                 <button type="submit">Registrar Salida</button>
+                <button type="button" id="cancelar" onclick="logout()">Cancelar</button>
             </div>
         </div>
     </form>
@@ -236,6 +237,12 @@
             });
 
         });
+
+        // metodo para el boton Cancelar
+        function logout() {
+            window.location.href = "/logout";
+        }
+
     </script>
 </body>
 

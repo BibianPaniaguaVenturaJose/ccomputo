@@ -1,4 +1,4 @@
-<h1>Estadisticos de Software Usado</h1>
+<h1>Estadístico de Uso de software por programa educativo</h1>
 
 <!-- Gráfica -->
 <div class="grafica">

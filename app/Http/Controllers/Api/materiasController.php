@@ -32,16 +32,16 @@ class materiasController extends Controller
     }
 
     public function obtenerCarreraPorMateria($idMateria)
-{
-    $materia = Materias::find($idMateria);
+    {
+        $materia = Materias::find($idMateria);
 
-    if ($materia) {
-        $carrera = Carreras::find($materia->idCarrera); // Obtener la carrera asociada
-        return response()->json(['carrera' => $carrera ? $carrera->carrera : null, 'ID' => $carrera ? $carrera->idCarrera: null]);
-    } else {
-        return response()->json(['carrera' => null], 404);
+        if ($materia) {
+            $carrera = Carreras::find($materia->idCarrera); // Obtener la carrera asociada
+            return response()->json(['carrera' => $carrera ? $carrera->carrera : null, 'ID' => $carrera ? $carrera->idCarrera : null]);
+        } else {
+            return response()->json(['carrera' => null], 404);
+        }
     }
-}
 
 
 

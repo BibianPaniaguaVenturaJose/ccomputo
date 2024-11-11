@@ -1,7 +1,7 @@
-<h1>Estadisticos de Alumnos atendidos por mes</h1>
+<h1>Estadístico de Laboratorios académicos de cómputo</h1>
 
 <!-- Gráfica -->
-<div class="grafica">
+<div class="grafica-alum">
     <canvas class="my-4" id="graficaAlumnosXAula"></canvas>
 </div>
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExcelController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -23,14 +24,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Todas las graficas juntas, metodos de Home
+//Metodos de Home
 Route::get('inform/home', [InformController::class, 'show']);
 Route::get('inform/filtrar', [InformController::class, 'filtrarDatos'])->name('filtrar');
 
 
 // Metodos de inicio
 Route::get('inform/inicio', [InformController::class, 'cargar']);
-Route::get('inform/sol', [InformController::class, 'rangeFecha'])->name('range');
+Route::get('inform/sol', [InformController::class, 'filtrarPorFecha'])->name('range');
 
 
 // login
@@ -41,6 +42,13 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
     Route::post('/home', [HomeController::class, 'store']);
+    Route::get('/logout', [HomeController::class, 'logout']);
 });
+
+
+//Rutas para importar excel
+Route::get('inform/excel', [ExcelController::class, 'form']);
+Route::post('inform/excel', [ExcelController::class, 'import']);
+
 
 

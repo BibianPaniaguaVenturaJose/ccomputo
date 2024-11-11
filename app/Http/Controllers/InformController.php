@@ -302,6 +302,7 @@ class InformController extends Controller
     //Muestra la vista de inicio
     public function cargar()
     {
+        // Obtener registros agrupados por año y mes
         $registros = DB::table('registrosaulas')
             ->select('year', 'mes', DB::raw('COUNT(*) as cantidad'))
             ->groupBy('year', 'mes')
@@ -309,21 +310,192 @@ class InformController extends Controller
             ->orderByRaw("FIELD(mes, 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre')")
             ->get();
 
+        // Crear un array para mapear los nombres de los meses a sus números
+        $mesesNumericos = [
+            'enero' => '01',
+            'febrero' => '02',
+            'marzo' => '03',
+            'abril' => '04',
+            'mayo' => '05',
+            'junio' => '06',
+            'julio' => '07',
+            'agosto' => '08',
+            'septiembre' => '09',
+            'octubre' => '10',
+            'noviembre' => '11',
+            'diciembre' => '12'
+        ];
+
         // Preparar los datos para la gráfica
-        $labels = $registros->map(function ($registro) {
-            return $registro->mes;
+        $labels = $registros->map(function ($registro) use ($mesesNumericos) {
+            // Obtener el número del mes usando el array
+            $mesNumerico = $mesesNumericos[$registro->mes] ?? '00'; // Si no se encuentra, usa '00'
+            return $registro->year . '-' . $mesNumerico; // Formato: año-mes
         });
 
+
+
+        // Obtener días hábiles para cada mes presente en los registros
+        $diasHabilesPorMes = [];
+
+        $inicioYear = date('Y') . '-01-01';
+        $finYear = date('Y') . '-12-31';
+
+        // Define la consulta SQL
+        $sql = "
+        WITH fechas AS (
+            SELECT DATE_ADD('$inicioYear', INTERVAL n DAY) AS fecha
+                FROM (
+            SELECT a.N + b.N * 10 + c.N * 100 AS n
+                FROM (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+                CROSS JOIN (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
+                CROSS JOIN (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
+            ) n
+            WHERE DATE_ADD('$inicioYear', INTERVAL n DAY) <= '$finYear'
+            )
+        SELECT
+            YEAR(fecha) AS year,
+                MONTH(fecha) AS month,
+            COUNT(*) AS total_dias_habiles
+        FROM fechas
+        WHERE DAYOFWEEK(fecha) NOT IN (1, 7)  -- Excluir domingos y sábados
+        GROUP BY YEAR(fecha), MONTH(fecha)
+        ORDER BY year, month;
+        ";
+
+        // Ejecuta la consulta con DB::select
+        $diasHabilesPorMes = DB::select($sql);
+
+        // Transformar diasHabilesPorMes a un array indexado por año y mes
+        $diasHabilesPorMesArray = [];
+        foreach ($diasHabilesPorMes as $dia) {
+            $key = $dia->year . '-' . str_pad($dia->month, 2, '0', STR_PAD_LEFT);
+            $diasHabilesPorMesArray[$key] = $dia->total_dias_habiles * 65;
+        }
+
+
+        // Obtener los datos para la gráfica
         $data = $registros->pluck('cantidad');
 
-        return view('inform.inicio', compact('labels', 'data'));
+        return view('inform.inicio', compact('labels', 'data', 'diasHabilesPorMesArray'));
     }
 
-    public function rangeFecha(Request $request)
+    public function filtrarPorFecha(Request $request)
     {
+        // Validación de las fechas de entrada
+        $request->validate([
+            'fechaInicio' => 'required|date',
+            'fechaFin' => 'required|date',
+        ]);
 
+        // Fechas de inicio y fin para el filtro
+        $fechaInicio = Carbon::parse($request->input('fechaInicio'))->startOfDay();
+        $fechaFin = Carbon::parse($request->input('fechaFin'))->endOfDay();
+
+        // Consulta con el filtro por fechas
+        $registros = DB::table('registrosaulas')
+        ->select('year', 'mes', DB::raw('COUNT(*) as cantidad'))
+        ->whereRaw("CONCAT(year, '-',
+                CASE mes
+                    WHEN 'enero' THEN '01'
+                    WHEN 'febrero' THEN '02'
+                    WHEN 'marzo' THEN '03'
+                    WHEN 'abril' THEN '04'
+                    WHEN 'mayo' THEN '05'
+                    WHEN 'junio' THEN '06'
+                    WHEN 'julio' THEN '07'
+                    WHEN 'agosto' THEN '08'
+                    WHEN 'septiembre' THEN '09'
+                    WHEN 'octubre' THEN '10'
+                    WHEN 'noviembre' THEN '11'
+                    WHEN 'diciembre' THEN '12'
+                END, '-',
+                LPAD(dia, 2, '0')
+            ) BETWEEN ? AND ?", [$fechaInicio, $fechaFin])
+        ->groupBy('year', 'mes')
+        ->orderBy('year')
+        ->orderByRaw("FIELD(mes, 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre')")
+        ->get();
+
+    // Aquí puedes procesar $registros y pasar los datos a la vista
+    // Por ejemplo:
+    $labels = $registros->map(function ($registro) {
+       return $registro->year . '-' . str_pad(array_search($registro->mes, ['enero' => '01', 'febrero' => '02',
+    'marzo' => '03', 'abril' => '04', 'mayo' => '05', 'junio' => '06', 'julio' => '07', 'agosto' => '08', 'septiembre' => '09',
+     'octubre' => '10', 'noviembre' => '11', 'diciembre' => '12']), 2, '0', STR_PAD_LEFT);
+    });
+
+
+        //dd($registros);
+
+        // Crear un array para mapear los nombres de los meses a sus números
+        $mesesNumericos = [
+            'enero' => '01',
+            'febrero' => '02',
+            'marzo' => '03',
+            'abril' => '04',
+            'mayo' => '05',
+            'junio' => '06',
+            'julio' => '07',
+            'agosto' => '08',
+            'septiembre' => '09',
+            'octubre' => '10',
+            'noviembre' => '11',
+            'diciembre' => '12'
+        ];
+
+        // Preparar los datos para la gráfica
+        $labels = $registros->map(function ($registro) use ($mesesNumericos) {
+            $mesNumerico = $mesesNumericos[$registro->mes] ?? '00'; // Si no se encuentra, usa '00'
+            return $registro->year . '-' . $mesNumerico; // Formato: año-mes
+        });
+
+        // Obtener días hábiles para cada mes presente en los registros filtrados
+        $diasHabilesPorMes = [];
+
+        // Consulta SQL para días hábiles dentro del rango de fechas
+        $sql = "
+    WITH fechas AS (
+        SELECT DATE_ADD(?, INTERVAL n DAY) AS fecha
+        FROM (
+            SELECT a.N + b.N * 10 + c.N * 100 AS n
+            FROM (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+            CROSS JOIN (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
+            CROSS JOIN (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
+        ) n
+        WHERE DATE_ADD(?, INTERVAL n DAY) <= ?
+    )
+    SELECT
+        YEAR(fecha) AS year,
+        MONTH(fecha) AS month,
+        COUNT(*) AS total_dias_habiles
+    FROM fechas
+    WHERE DAYOFWEEK(fecha) NOT IN (1, 7)  -- Excluir domingos y sábados
+    GROUP BY YEAR(fecha), MONTH(fecha)
+    ORDER BY year, month;
+    ";
+
+        // Ejecutar la consulta con DB::select, pasando las fechas de inicio y fin
+        $diasHabilesPorMes = DB::select($sql, [$fechaInicio->toDateString(), $fechaInicio->toDateString(), $fechaFin->toDateString()]);
+
+        // Transformar diasHabilesPorMes a un array indexado por año y mes
+        $diasHabilesPorMesArray = [];
+        foreach ($diasHabilesPorMes as $dia) {
+            $key = $dia->year . '-' . str_pad($dia->month, 2, '0', STR_PAD_LEFT);
+            $diasHabilesPorMesArray[$key] = $dia->total_dias_habiles * 65; // Multiplicando por 5 aulas 13 hrs dispobibles = 65
+        }
+
+        // Obtener los datos para la gráfica
+        $data = $registros->pluck('cantidad');
+
+        return view('inform.inicio', compact('labels', 'data', 'diasHabilesPorMesArray'));
     }
-
 
 
 }
