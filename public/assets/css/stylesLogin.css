@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #000000;
-    background-image: url('/assets/resources/SLIDE-PROPEDÉUTICO.jpg');
+    background-image: url('/assets/resources/SLIDE_WEB.jpg');
     background-size: cover; /* Para que la imagen cubra todo el fondo */
     background-position: center bottom; /* Centrar la imagen */
     background-repeat: no-repeat; /* Evitar que la imagen se repita */

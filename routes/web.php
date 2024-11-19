@@ -38,6 +38,7 @@ Route::get('inform/sol', [InformController::class, 'filtrarPorFecha'])->name('ra
 Route::get('/login', [LoginController::class, 'show'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
+
 // home, protegido por auth middleware
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
