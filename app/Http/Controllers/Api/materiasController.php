@@ -44,6 +44,4 @@ class materiasController extends Controller
     }
 
 
-
-
 }

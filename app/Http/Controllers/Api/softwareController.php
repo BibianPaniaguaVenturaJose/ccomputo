@@ -15,11 +15,6 @@ class softwareController extends Controller
         return response()->json($software);
     }
 
-    public function showSoftware(){
-        $softwareList = Software::all();
-        return view('home.index', ['softwareList' => $softwareList]);
-    }
-
     // Método para obtener el software de un aula específica
     public function getSoftwarePorAula($idAula)
     {

@@ -24,7 +24,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'claveDocente' => $row['clave'],
                 ]);
             }catch (\ErrorException $e){
-                //Capturar errores por ingresar un archivo no leible, debe ser un .CSV
+                // Capturar errores por ingresar un archivo no leible, debe ser un .CSV
                 Log::error("Error por el tipo de archivo o extención." . $e->getMessage());
             } catch (QueryException $e) {
                 // Captura errores de consulta SQL
@@ -44,5 +44,5 @@ class DataImport implements ToCollection, WithHeadingRow
         }
     }
 
-
 }
+

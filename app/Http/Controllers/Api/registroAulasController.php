@@ -93,7 +93,4 @@ class registroAulasController extends Controller
     }
 
 
-
-
-
 }

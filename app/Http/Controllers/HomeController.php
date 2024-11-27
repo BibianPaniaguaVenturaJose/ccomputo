@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Carbon\Traits\ToStringFormat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
